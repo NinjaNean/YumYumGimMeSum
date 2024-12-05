@@ -14,9 +14,9 @@
     />
   </head>
   <body>
-    <section class="menu-page">
+    <section class="menu-page hide">
       <h1>MENY</h1>
-      <div class="cart">
+      <div class="cart-menu">
         <img src="cart btn.png" alt="" />
       </div>
 
@@ -33,17 +33,64 @@
       </section>
     </section>
 
-    <div class="cart-page hide">
-      <button class="buttons" id="order">TAKE MY MONEY!</button>
+    <div class="cart-page">
+      <div class="cart-menu">
+        <img src="cart btn.png" alt="" />
+      </div>
+
+      <div class="order-list">
+        <div class="order-item">
+          <h2>KARLSTAD <span class="dotts"> </span> 27 SEK</h2>
+          <div>
+            <button><img src="Union.png" alt="" /></button>
+            <p>3 stycken</p>
+            <button><img src="Rectangle 22.png" alt="" /></button>
+          </div>
+        </div>
+
+        <div class="order-item">
+          <h2>KARLSTAD <span class="dotts"> </span> 27 SEK</h2>
+          <div>
+            <button><img src="Union.png" alt="" /></button>
+            <p>3 stycken</p>
+            <button><img src="Rectangle 22.png" alt="" /></button>
+          </div>
+        </div>
+
+        <div class="order-item">
+          <h2>KARLSTAD <span class="dotts"> </span> 27 SEK</h2>
+          <div>
+            <button><img src="Union.png" alt="" /></button>
+            <p>3 stycken</p>
+            <button><img src="Rectangle 22.png" alt="" /></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex-bottom">
+        <div class="order-price">
+          <div>
+            <p class="total">TOTALT</p>
+            <p class="moms">inkl 20% moms</p>
+          </div>
+
+          <p class="price">120 SEK</p>
+        </div>
+        <button class="buttons" id="order">TAKE MY MONEY!</button>
+      </div>
     </div>
 
     <section class="eta-page hide">
       <img src="a087f7ec21b4c797b479c102d8b7d9f8.png" alt="" />
-      <h1>DINA WONTONS TILLAGAS!</h1>
-      <p>ETA 5 MIN</p>
-      <p>#4KJWSDF2</p>
-      <button class="ghost-button buttons">SE KVITTO</button>
-      <button class="buttons">GÖR EN NY BESTÄLLNING</button>
+      <div class="eta-text">
+        <h1>DINA WONTONS TILLAGAS!</h1>
+        <p>ETA 5 MIN</p>
+        <p>#4KJWSDF2</p>
+      </div>
+      <div class="flex-bottom">
+        <button class="ghost-button buttons">SE KVITTO</button>
+        <button class="buttons">GÖR EN NY BESTÄLLNING</button>
+      </div>
     </section>
 
     <section class="receipt-page hide"></section>

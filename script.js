@@ -30,7 +30,8 @@ const drinkData = await drinkResponse.json();
 
 const sauceButton = document.querySelector(".sauce-buttons");
 const drinksButton = document.querySelector(".drinks-buttons");
-const cartButton = document.querySelector(".cart");
+const cartButton = document.querySelector(".cart-menu");
+const orderButton = document.querySelector("#order");
 const menuPage = document.querySelector(".menu-page");
 const cartPage = document.querySelector(".cart-page");
 const etaPage = document.querySelector(".eta-page");
@@ -51,6 +52,11 @@ drinkData.items.forEach((element) => {
 cartButton.addEventListener("click", () => {
   hideAllPages();
   cartPage.classList.remove("hide");
+});
+
+order.addEventListener("click", () => {
+  hideAllPages();
+  etaPage.classList.remove("hide");
 });
 
 function createMenuItem(food) {
