@@ -52,11 +52,13 @@ drinkData.items.forEach((element) => {
 cartButton.addEventListener("click", () => {
   hideAllPages();
   cartPage.classList.remove("hide");
+  document.body.style.backgroundColor = "#eeeeee";
 });
 
 order.addEventListener("click", () => {
   hideAllPages();
   etaPage.classList.remove("hide");
+  document.body.style.backgroundColor = "#605858";
 });
 
 function createMenuItem(food) {
