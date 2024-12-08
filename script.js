@@ -1,4 +1,4 @@
-const key = "yum-edVCa1E6zDZRztaq"; // My API key
+const key = "yum-edVCa1E6zDZRztaq";
 
 const tenant = {
   id: "h474",
@@ -61,7 +61,7 @@ document.querySelector(".cart-menu").addEventListener("click", () => {
 
   for (const [key, value] of Object.entries(cart)) {
     renderOrderCart(key, value);
-    setPrice(key, value);
+    setPrice();
   }
 });
 
@@ -70,7 +70,6 @@ document.querySelector(".home").addEventListener("click", () => {
   menuPage.classList.remove("hide");
   document.body.style.backgroundColor = "#489078";
   orderList.innerHTML = "";
-  total = 0;
 });
 
 document.querySelector("#order").addEventListener("click", () => {
@@ -83,20 +82,18 @@ document.querySelector(".menu").addEventListener("click", (event) => {
   if (event.target.closest(".item")) {
     const item = event.target.closest(".item");
     item.classList.add("menu-option-active");
-
-    uppdateCartNumber();
     updateCart(item.getAttribute("orderId"));
   }
+  updateCartNumber();
 });
 
 document.querySelector(".sauce-buttons").addEventListener("click", (event) => {
   if (event.target.closest("button")) {
     const item = event.target.closest("button");
     item.classList.add("menu-option-active");
-
-    uppdateCartNumber();
     updateCart(item.getAttribute("orderId"));
   }
+  updateCartNumber();
 });
 
 document.querySelector(".drinks-buttons").addEventListener("click", (event) => {
@@ -104,10 +101,13 @@ document.querySelector(".drinks-buttons").addEventListener("click", (event) => {
     const item = event.target.closest("button");
     item.classList.add("menu-option-active");
 
-    uppdateCartNumber();
+    updateCartNumber();
     updateCart(item.getAttribute("orderId"));
   }
 });
+
+// document.querySelector('.more-button')
+
 
 // Funktion för att rendera ut meny valen.
 function createMenuItem(food) {
@@ -160,6 +160,7 @@ async function renderOrderCart(key, value) {
 
   let div = document.createElement("div");
   div.classList.add("order-item");
+  div.setAttribute('cart-item-id', key)
 
   let span = document.createElement("span");
   span.classList.add("dotts");
@@ -174,6 +175,7 @@ async function renderOrderCart(key, value) {
   plusImg.src = "./img/Union.png";
   let minusButton = document.createElement("button");
   let minusImg = document.createElement("img");
+
   minusImg.src = "./img/Rectangle 22.png";
   let p = document.createElement("p");
   p.innerText = value + " stycken";
@@ -183,9 +185,37 @@ async function renderOrderCart(key, value) {
   container.append(plusButton, p, minusButton);
   div.append(h2, container);
   orderList.append(div);
+
+  plusButton.addEventListener('click', () => {
+    updateCart(key)
+    value = cart[key]
+    p.textContent = value + ' stycken'
+
+    h2.innerHTML = ' '
+    h2.innerText = itemData.item.name;
+    h2.append(span);
+    h2.append(`${[itemData.item.price * value]} SEK`);
+
+    setPrice()
+    updateCartNumber()
+  });
+
+  minusButton.addEventListener('click', () => {
+    updateCartNegative(key)
+    value = cart[key]
+    p.textContent = value + ' stycken'
+
+    h2.innerHTML = ' '
+    h2.innerText = itemData.item.name;
+    h2.append(span);
+    h2.append(`${[itemData.item.price * value]} SEK`);
+
+    setPrice()
+    updateCartNumber()
+  });
 }
 
-// Uppdaterar cart.
+// Uppdaterar cart plus.
 function updateCart(id) {
   if (cart[id]) {
     cart[id] += 1;
@@ -194,9 +224,24 @@ function updateCart(id) {
   }
 }
 
+// Uppdaterar cart negativt.
+function updateCartNegative(id) {
+  if (cart[id] > 1) {
+    cart[id] -= 1;
+  } else {
+    delete cart[id];
+    const item = document.querySelector(`[cart-item-id='${id}']`);
+    const menuItem = document.querySelector(`[orderId='${id}']`)
+    if (item) {
+      item.remove();
+      menuItem.classList.remove('menu-option-active')
+    }
+  }
+}
+
 // Uppdaterar visuel siffra på startsidan för hur många produkter man har i kundvagn.
-function uppdateCartNumber() {
-  let sum = 1;
+function updateCartNumber() {
+  let sum = 0;
   for (const [key, value] of Object.entries(cart)) {
     sum += value;
   }
@@ -204,13 +249,17 @@ function uppdateCartNumber() {
   numberOfItemInCart.innerText = sum;
 }
 
-let total = 0;
 // Sätter totala priset på ordern.
-async function setPrice(key, value) {
-  const price = document.querySelector(".price");
+async function setPrice() {
+  let total = 0
   const url = "https://fdnzawlcf6.execute-api.eu-north-1.amazonaws.com/menu/";
-  const item = await fetch(url + key, options);
-  const itemData = await item.json();
-  total += itemData.item.price * value;
+  
+  for (const [key, value] of Object.entries(cart)) {
+    const item = await fetch(url + key, options);
+    const itemData = await item.json();
+    total += itemData.item.price * value;
+  }
+
+  const price = document.querySelector(".price");
   price.innerText = total + " SEK";
-}
+  }
