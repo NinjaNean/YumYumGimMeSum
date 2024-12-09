@@ -23,7 +23,7 @@
       <h1>MENY</h1>
       <div class="cart-menu">
         <div class="orange-circle"></div>
-        <img src="./img/cart btn.png" alt="" />
+        <img src="./img/cart btn.png" alt="cart icon" />
       </div>
 
       <section class="menu"></section>
@@ -41,7 +41,7 @@
 
     <div class="cart-page hide">
       <div class="cart-menu home">
-        <img src="./img/cart btn.png" alt="" />
+        <img src="./img/cart btn.png" alt="cart icon" />
       </div>
 
       <div class="order-list"></div>
@@ -63,15 +63,47 @@
       <img src="./img/a087f7ec21b4c797b479c102d8b7d9f8.png" alt="" />
       <div class="eta-text">
         <h1>DINA WONTONS TILLAGAS!</h1>
-        <p>ETA 5 MIN</p>
-        <p>#4KJWSDF2</p>
+        <p class="eta-text"></p>
+        <p class="order-id"></p>
       </div>
       <div class="flex-bottom">
         <button class="ghost-button buttons">SE KVITTO</button>
-        <button class="buttons">GÖR EN NY BESTÄLLNING</button>
+        <button class="buttons new-order">GÖR EN NY BESTÄLLNING</button>
       </div>
     </section>
 
-    <section class="receipt-page hide"></section>
+    <section class="receipt-page hide">
+      <div class="receipt">
+        <section class="receipt-info">
+          <img src="./img/logo.png" alt="yygs logo" />
+          <h2>KVITTO</h2>
+          <p class="order-id"></p>
+
+          <div class="finish-order">
+            <div class="finish-order-item">
+              <h2>Karlstad<span class="dotts"></span>9 SEK</h2>
+              <p>1 stycken</p>
+            </div>
+            <div class="finish-order-item">
+              <h2>Karlstad<span class="dotts"></span>9 SEK</h2>
+              <p>1 stycken</p>
+            </div>
+          </div>
+        </section>
+
+        <div class="order-price">
+          <div>
+            <p class="total">TOTALT</p>
+            <p class="moms">inkl 20% moms</p>
+          </div>
+
+          <p class="price">0 SEK</p>
+        </div>
+      </div>
+
+      <div class="flex-bottom">
+        <button class="buttons new-order">GÖR EN NY BESTÄLLNING</button>
+      </div>
+    </section>
   </body>
 </html>

@@ -14,6 +14,7 @@ const options = {
 };
 
 let cart = {};
+let getOrderId = "";
 
 let url = "https://fdnzawlcf6.execute-api.eu-north-1.amazonaws.com/menu";
 
@@ -61,7 +62,7 @@ document.querySelector(".cart-menu").addEventListener("click", () => {
 
   for (const [key, value] of Object.entries(cart)) {
     renderOrderCart(key, value);
-    setPrice();
+    updateTotalPrice();
   }
 });
 
@@ -76,6 +77,7 @@ document.querySelector("#order").addEventListener("click", () => {
   hideAllPages();
   etaPage.classList.remove("hide");
   document.body.style.backgroundColor = "#605858";
+  sendOrder();
 });
 
 document.querySelector(".menu").addEventListener("click", (event) => {
@@ -106,10 +108,39 @@ document.querySelector(".drinks-buttons").addEventListener("click", (event) => {
   }
 });
 
-// document.querySelector('.more-button')
+document.querySelector(".ghost-button").addEventListener("click", () => {
+  hideAllPages();
+  receiptPage.classList.remove("hide");
+  renderOutReceipt();
+});
 
+document.querySelectorAll(".new-order").forEach((button) => {
+  button.addEventListener("click", () => {
+    hideAllPages();
+    menuPage.classList.remove("hide");
+    document.body.style.backgroundColor = "#489078";
+    orderResetHandler();
+  });
+});
 
-// Funktion för att rendera ut meny valen.
+// Återställer beställningen genom att rensa valda menyer, tömma kundvagnen och återställa gränssnittet.
+function orderResetHandler() {
+  const item = document.querySelectorAll("[orderId]");
+  item.forEach((food) => {
+    food.classList.remove("menu-option-active");
+  });
+  cart = {};
+  orderList.innerHTML = "";
+  updateCartNumber();
+  updateTotalPrice();
+
+  const orderID = document.querySelectorAll(".order-id");
+  orderID.forEach((order) => {
+    order.innerText = "";
+  });
+}
+
+// Skapar och lägger till ett menyalternativ i menyn baserat på matobjektet.
 function createMenuItem(food) {
   const menu = document.querySelector(".menu");
 
@@ -135,7 +166,7 @@ function createMenuItem(food) {
   menu.append(div);
 }
 
-// Funktion för att rendera ut dipp och drick valen.
+// Skapar en knapp för dipp eller dryck och lägger till den i rätt kategori.
 function createDipOrDrinkList(type, sort) {
   let button = document.createElement("button");
   button.setAttribute("orderId", type.id);
@@ -144,7 +175,7 @@ function createDipOrDrinkList(type, sort) {
   sort.append(button);
 }
 
-// sätter hide på alla sectioner som ska föreställa mina sidor.
+// Döljer alla sidosektioner för att förbereda gränssnittet.
 function hideAllPages() {
   cartPage.classList.add("hide");
   etaPage.classList.add("hide");
@@ -152,7 +183,7 @@ function hideAllPages() {
   menuPage.classList.add("hide");
 }
 
-// Renderar ut kundkorgen.
+// Renderar kundvagnens innehåll och uppdaterar gränssnittet med aktuell information.
 async function renderOrderCart(key, value) {
   const url = "https://fdnzawlcf6.execute-api.eu-north-1.amazonaws.com/menu/";
   const item = await fetch(url + key, options);
@@ -160,7 +191,7 @@ async function renderOrderCart(key, value) {
 
   let div = document.createElement("div");
   div.classList.add("order-item");
-  div.setAttribute('cart-item-id', key)
+  div.setAttribute("cart-item-id", key);
 
   let span = document.createElement("span");
   span.classList.add("dotts");
@@ -186,36 +217,36 @@ async function renderOrderCart(key, value) {
   div.append(h2, container);
   orderList.append(div);
 
-  plusButton.addEventListener('click', () => {
-    updateCart(key)
-    value = cart[key]
-    p.textContent = value + ' stycken'
+  plusButton.addEventListener("click", () => {
+    updateCart(key);
+    value = cart[key];
+    p.textContent = value + " stycken";
 
-    h2.innerHTML = ' '
+    h2.innerHTML = " ";
     h2.innerText = itemData.item.name;
     h2.append(span);
     h2.append(`${[itemData.item.price * value]} SEK`);
 
-    setPrice()
-    updateCartNumber()
+    updateTotalPrice();
+    updateCartNumber();
   });
 
-  minusButton.addEventListener('click', () => {
-    updateCartNegative(key)
-    value = cart[key]
-    p.textContent = value + ' stycken'
+  minusButton.addEventListener("click", () => {
+    decrementCartItem(key);
+    value = cart[key];
+    p.textContent = value + " stycken";
 
-    h2.innerHTML = ' '
+    h2.innerHTML = " ";
     h2.innerText = itemData.item.name;
     h2.append(span);
     h2.append(`${[itemData.item.price * value]} SEK`);
 
-    setPrice()
-    updateCartNumber()
+    updateTotalPrice();
+    updateCartNumber();
   });
 }
 
-// Uppdaterar cart plus.
+// Uppdaterar kundvagnen genom att lägga till en produkt eller öka dess antal.
 function updateCart(id) {
   if (cart[id]) {
     cart[id] += 1;
@@ -224,17 +255,17 @@ function updateCart(id) {
   }
 }
 
-// Uppdaterar cart negativt.
-function updateCartNegative(id) {
+// Uppdaterar kundvagnen genom att minska antal eller ta bort produkten.
+function decrementCartItem(id) {
   if (cart[id] > 1) {
     cart[id] -= 1;
   } else {
     delete cart[id];
     const item = document.querySelector(`[cart-item-id='${id}']`);
-    const menuItem = document.querySelector(`[orderId='${id}']`)
+    const menuItem = document.querySelector(`[orderId='${id}']`);
     if (item) {
       item.remove();
-      menuItem.classList.remove('menu-option-active')
+      menuItem.classList.remove("menu-option-active");
     }
   }
 }
@@ -249,17 +280,76 @@ function updateCartNumber() {
   numberOfItemInCart.innerText = sum;
 }
 
-// Sätter totala priset på ordern.
-async function setPrice() {
-  let total = 0
+// Räknar och uppdaterar det totala priset för beställningen.
+async function updateTotalPrice() {
+  let total = 0;
   const url = "https://fdnzawlcf6.execute-api.eu-north-1.amazonaws.com/menu/";
-  
+
   for (const [key, value] of Object.entries(cart)) {
     const item = await fetch(url + key, options);
     const itemData = await item.json();
     total += itemData.item.price * value;
   }
 
-  const price = document.querySelector(".price");
-  price.innerText = total + " SEK";
+  const price = document.querySelectorAll(".price");
+  price.forEach((price) => {
+    price.innerText = total + " SEK";
+  });
+}
+
+// Renderar ut kvittot
+function renderOutReceipt() {
+  const finishOrder = document.querySelector(".finish-order");
+  let container = document.createElement("div");
+  let h2 = document.createElement("h2");
+}
+
+// Skickar ordern
+async function sendOrder() {
+  const url = "https://fdnzawlcf6.execute-api.eu-north-1.amazonaws.com/h474/orders";
+  let cartArray = cartToArrey();
+
+  const option = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-zocom": key,
+    },
+    body: JSON.stringify({ items: cartArray }),
+  };
+
+  const order = await fetch(url, option);
+  const orderData = await order.json();
+
+  getOrderId = orderData.order.id;
+  const orderID = document.querySelectorAll(".order-id");
+  orderID.forEach((order) => {
+    order.innerText = "#" + getOrderId;
+  });
+
+  etaTime(orderData.order.eta);
+
+  const ETA = document.querySelector(".eta-text");
+  //   ETA.innerText = ???
+}
+
+// Funktion som gör om cart till array
+function cartToArrey() {
+  let cartArray = [];
+
+  for (const [key, value] of Object.entries(cart)) {
+    for (let index = 0; index < value; index++) {
+      cartArray.push(Number(key));
+    }
   }
+
+  return cartArray;
+}
+
+// Funktion som räknar ut ETA
+function etaTime(time) {
+  let curentTime = new Date();
+  let etaTime = new Date(time);
+
+  console.log(time, curentTime);
+}
