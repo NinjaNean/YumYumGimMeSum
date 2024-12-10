@@ -28,10 +28,6 @@ const dipData = await dipResponse.json();
 const drinkResponse = await fetch(url + "?type=drink", options);
 const drinkData = await drinkResponse.json();
 
-// console.log(wontonData.items);
-// console.log(dipData.items);
-// console.log(drinkData.items);
-
 const sauceButton = document.querySelector(".sauce-buttons");
 const drinksButton = document.querySelector(".drinks-buttons");
 const menuPage = document.querySelector(".menu-page");
