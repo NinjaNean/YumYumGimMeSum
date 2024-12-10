@@ -9,6 +9,7 @@ const options = {
   method: "GET",
   headers: {
     "Content-Type": "application/json",
+    "accept": "application/json",
     "x-zocom": key,
   },
 };
@@ -39,6 +40,8 @@ const etaPage = document.querySelector(".eta-page");
 const receiptPage = document.querySelector(".receipt-page");
 const orderList = document.querySelector(".order-list");
 const numberOfItemInCart = document.querySelector(".orange-circle");
+const hoverEffect = document.querySelector('.hover-effect')
+const finishOrder = document.querySelector(".finish-order");
 
 // Renderar ut meny valen:
 wontonData.items.forEach((element) => {
@@ -74,16 +77,20 @@ document.querySelector(".home").addEventListener("click", () => {
 });
 
 document.querySelector("#order").addEventListener("click", () => {
-  hideAllPages();
-  etaPage.classList.remove("hide");
-  document.body.style.backgroundColor = "#605858";
-  sendOrder();
+  if (Object.keys(cart).length === 0) {
+    return
+  }
+  else {
+    hideAllPages();
+    etaPage.classList.remove("hide");
+    document.body.style.backgroundColor = "#605858";
+    sendOrder();
+  }
 });
 
 document.querySelector(".menu").addEventListener("click", (event) => {
   if (event.target.closest(".item")) {
     const item = event.target.closest(".item");
-    item.classList.add("menu-option-active");
     updateCart(item.getAttribute("orderId"));
   }
   updateCartNumber();
@@ -92,7 +99,6 @@ document.querySelector(".menu").addEventListener("click", (event) => {
 document.querySelector(".sauce-buttons").addEventListener("click", (event) => {
   if (event.target.closest("button")) {
     const item = event.target.closest("button");
-    item.classList.add("menu-option-active");
     updateCart(item.getAttribute("orderId"));
   }
   updateCartNumber();
@@ -101,7 +107,6 @@ document.querySelector(".sauce-buttons").addEventListener("click", (event) => {
 document.querySelector(".drinks-buttons").addEventListener("click", (event) => {
   if (event.target.closest("button")) {
     const item = event.target.closest("button");
-    item.classList.add("menu-option-active");
 
     updateCartNumber();
     updateCart(item.getAttribute("orderId"));
@@ -126,11 +131,9 @@ document.querySelectorAll(".new-order").forEach((button) => {
 // Återställer beställningen genom att rensa valda menyer, tömma kundvagnen och återställa gränssnittet.
 function orderResetHandler() {
   const item = document.querySelectorAll("[orderId]");
-  item.forEach((food) => {
-    food.classList.remove("menu-option-active");
-  });
   cart = {};
   orderList.innerHTML = "";
+  finishOrder.innerHTML = ""
   updateCartNumber();
   updateTotalPrice();
 
@@ -265,7 +268,6 @@ function decrementCartItem(id) {
     const menuItem = document.querySelector(`[orderId='${id}']`);
     if (item) {
       item.remove();
-      menuItem.classList.remove("menu-option-active");
     }
   }
 }
@@ -273,8 +275,17 @@ function decrementCartItem(id) {
 // Uppdaterar visuel siffra på startsidan för hur många produkter man har i kundvagn.
 function updateCartNumber() {
   let sum = 0;
+  const orange = document.querySelector('.orange-circle ')
+
   for (const [key, value] of Object.entries(cart)) {
     sum += value;
+  }
+
+  if(sum != 0) {
+    orange.classList.remove('hide')
+  }
+  else {
+    orange.classList.add('hide')
   }
 
   numberOfItemInCart.innerText = sum;
@@ -298,10 +309,33 @@ async function updateTotalPrice() {
 }
 
 // Renderar ut kvittot
-function renderOutReceipt() {
-  const finishOrder = document.querySelector(".finish-order");
-  let container = document.createElement("div");
-  let h2 = document.createElement("h2");
+async function renderOutReceipt() {
+  const url = 'https://fdnzawlcf6.execute-api.eu-north-1.amazonaws.com/receipts/'
+
+  const order = await fetch(url + getOrderId, options)
+  const orderData = await order.json()
+
+  let itemData = orderData.receipt.items
+
+  itemData.forEach(food => {
+    console.log(food)
+    let container = document.createElement("div");
+    container.classList.add('finish-order-item')
+
+    let h2 = document.createElement("h2");
+    h2.innerText = food.name;
+    let span = document.createElement('span')
+    span.classList.add('dotts')
+    h2.append(span);
+    h2.append(`${food.price} SEK`);
+
+    let p = document.createElement('p')
+    p.innerText = `${food.quantity} stycken`
+
+    container.append(h2, p)
+    finishOrder.append(container)
+  })
+  
 }
 
 // Skickar ordern
@@ -327,10 +361,10 @@ async function sendOrder() {
     order.innerText = "#" + getOrderId;
   });
 
-  etaTime(orderData.order.eta);
+  let time = etaTime(orderData.order.eta);
 
-  const ETA = document.querySelector(".eta-text");
-  //   ETA.innerText = ???
+  const ETA = document.querySelector(".eta-time");
+  ETA.innerText = `ETA ${time}`
 }
 
 // Funktion som gör om cart till array
@@ -347,9 +381,19 @@ function cartToArrey() {
 }
 
 // Funktion som räknar ut ETA
-function etaTime(time) {
-  let curentTime = new Date();
-  let etaTime = new Date(time);
+function etaTime(targetTime) {
+  const currentTime = new Date();
+  const etaTime = new Date(targetTime);
 
-  console.log(time, curentTime);
+  const differenceInMs = etaTime - currentTime;
+
+  const totalMinutes = Math.floor(differenceInMs / (1000 * 60));
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+
+  if (hours > 0) {
+    return `${hours} TIM ${minutes.toString().padStart(2, '0')} MIN`;
+  }
+  return `${minutes} MIN`;
 }
+
