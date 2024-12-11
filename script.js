@@ -9,7 +9,7 @@ const options = {
   method: "GET",
   headers: {
     "Content-Type": "application/json",
-    "accept": "application/json",
+    accept: "application/json",
     "x-zocom": key,
   },
 };
@@ -36,7 +36,7 @@ const etaPage = document.querySelector(".eta-page");
 const receiptPage = document.querySelector(".receipt-page");
 const orderList = document.querySelector(".order-list");
 const numberOfItemInCart = document.querySelector(".orange-circle");
-const hoverEffect = document.querySelector('.hover-effect')
+const hoverEffect = document.querySelector(".hover-effect");
 const finishOrder = document.querySelector(".finish-order");
 
 // Renderar ut meny valen:
@@ -74,9 +74,8 @@ document.querySelector(".home").addEventListener("click", () => {
 
 document.querySelector("#order").addEventListener("click", () => {
   if (Object.keys(cart).length === 0) {
-    return
-  }
-  else {
+    return;
+  } else {
     hideAllPages();
     etaPage.classList.remove("hide");
     document.body.style.backgroundColor = "#605858";
@@ -129,7 +128,7 @@ function orderResetHandler() {
   const item = document.querySelectorAll("[orderId]");
   cart = {};
   orderList.innerHTML = "";
-  finishOrder.innerHTML = ""
+  finishOrder.innerHTML = "";
   updateCartNumber();
   updateTotalPrice();
 
@@ -150,7 +149,7 @@ function createMenuItem(food) {
   let span = document.createElement("span");
   span.classList.add("dotts");
   let h2 = document.createElement("h2");
-  h2.innerText = food.name;
+  h2.innerText = food.name.toUpperCase();
   h2.append(span);
   h2.append(`${food.price} SEK`);
   let p = document.createElement("p");
@@ -195,7 +194,7 @@ async function renderOrderCart(key, value) {
   let span = document.createElement("span");
   span.classList.add("dotts");
   let h2 = document.createElement("h2");
-  h2.innerText = itemData.item.name;
+  h2.innerText = itemData.item.name.toUpperCase();
   h2.append(span);
   h2.append(`${[itemData.item.price * value]} SEK`);
 
@@ -271,17 +270,16 @@ function decrementCartItem(id) {
 // Uppdaterar visuel siffra på startsidan för hur många produkter man har i kundvagn.
 function updateCartNumber() {
   let sum = 0;
-  const orange = document.querySelector('.orange-circle ')
+  const orange = document.querySelector(".orange-circle ");
 
   for (const [key, value] of Object.entries(cart)) {
     sum += value;
   }
 
-  if(sum != 0) {
-    orange.classList.remove('hide')
-  }
-  else {
-    orange.classList.add('hide')
+  if (sum != 0) {
+    orange.classList.remove("hide");
+  } else {
+    orange.classList.add("hide");
   }
 
   numberOfItemInCart.innerText = sum;
@@ -306,32 +304,31 @@ async function updateTotalPrice() {
 
 // Renderar ut kvittot
 async function renderOutReceipt() {
-  const url = 'https://fdnzawlcf6.execute-api.eu-north-1.amazonaws.com/receipts/'
+  const url = "https://fdnzawlcf6.execute-api.eu-north-1.amazonaws.com/receipts/";
 
-  const order = await fetch(url + getOrderId, options)
-  const orderData = await order.json()
+  const order = await fetch(url + getOrderId, options);
+  const orderData = await order.json();
 
-  let itemData = orderData.receipt.items
+  let itemData = orderData.receipt.items;
 
-  itemData.forEach(food => {
-    console.log(food)
+  itemData.forEach((food) => {
+    console.log(food);
     let container = document.createElement("div");
-    container.classList.add('finish-order-item')
+    container.classList.add("finish-order-item");
 
     let h2 = document.createElement("h2");
-    h2.innerText = food.name;
-    let span = document.createElement('span')
-    span.classList.add('dotts')
+    h2.innerText = food.name.toUpperCase();
+    let span = document.createElement("span");
+    span.classList.add("dotts");
     h2.append(span);
     h2.append(`${food.price} SEK`);
 
-    let p = document.createElement('p')
-    p.innerText = `${food.quantity} stycken`
+    let p = document.createElement("p");
+    p.innerText = `${food.quantity} stycken`;
 
-    container.append(h2, p)
-    finishOrder.append(container)
-  })
-  
+    container.append(h2, p);
+    finishOrder.append(container);
+  });
 }
 
 // Skickar ordern
@@ -360,7 +357,7 @@ async function sendOrder() {
   let time = etaTime(orderData.order.eta);
 
   const ETA = document.querySelector(".eta-time");
-  ETA.innerText = `ETA ${time}`
+  ETA.innerText = `ETA ${time}`;
 }
 
 // Funktion som gör om cart till array
@@ -388,8 +385,7 @@ function etaTime(targetTime) {
   const minutes = totalMinutes % 60;
 
   if (hours > 0) {
-    return `${hours} TIM ${minutes.toString().padStart(2, '0')} MIN`;
+    return `${hours} TIM ${minutes.toString().padStart(2, "0")} MIN`;
   }
   return `${minutes} MIN`;
 }
-
