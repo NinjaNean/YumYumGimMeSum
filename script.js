@@ -9,7 +9,6 @@ const options = {
   method: "GET",
   headers: {
     "Content-Type": "application/json",
-    accept: "application/json",
     "x-zocom": key,
   },
 };
@@ -149,7 +148,7 @@ function createMenuItem(food) {
   let span = document.createElement("span");
   span.classList.add("dotts");
   let h2 = document.createElement("h2");
-  h2.innerText = food.name.toUpperCase();
+  h2.innerText = food.name;
   h2.append(span);
   h2.append(`${food.price} SEK`);
   let p = document.createElement("p");
@@ -194,7 +193,7 @@ async function renderOrderCart(key, value) {
   let span = document.createElement("span");
   span.classList.add("dotts");
   let h2 = document.createElement("h2");
-  h2.innerText = itemData.item.name.toUpperCase();
+  h2.innerText = itemData.item.name;
   h2.append(span);
   h2.append(`${[itemData.item.price * value]} SEK`);
 
@@ -317,7 +316,7 @@ async function renderOutReceipt() {
     container.classList.add("finish-order-item");
 
     let h2 = document.createElement("h2");
-    h2.innerText = food.name.toUpperCase();
+    h2.innerText = food.name;
     let span = document.createElement("span");
     span.classList.add("dotts");
     h2.append(span);
