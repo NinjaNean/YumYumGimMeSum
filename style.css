@@ -171,7 +171,11 @@ body {
 
   h1 {
     font-size: 2.1875rem;
-    font-size: clamp(2.1875rem, 0.1240892531876141rem + 8.46527485871748vw, 4rem);
+    font-size: clamp(
+      2.1875rem,
+      0.1240892531876141rem + 8.46527485871748vw,
+      4rem
+    );
   }
 
   .eta-time,
@@ -205,6 +209,17 @@ body {
       flex-direction: column;
       align-items: center;
 
+      .big {
+        font-size: 2rem;
+        margin-top: 1rem;
+      }
+
+      .grey {
+        font-weight: bold;
+        color: var(--grey-medium);
+        letter-spacing: 1px;
+      }
+
       .finish-order {
         width: 100%;
         display: flex;
@@ -228,6 +243,16 @@ body {
       border-radius: 0 0 4px 4px;
     }
   }
+}
+
+.error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 2rem;
+  text-align: center;
+  height: 100vh;
 }
 
 .order-price {

@@ -15,17 +15,10 @@ const options = {
 
 let cart = {};
 let getOrderId = "";
-
+let wontonData;
+let dipData;
+let drinkData;
 let url = "https://fdnzawlcf6.execute-api.eu-north-1.amazonaws.com/menu";
-
-const wontonResponse = await fetch(url + "?type=wonton", options);
-const wontonData = await wontonResponse.json();
-
-const dipResponse = await fetch(url + "?type=dip", options);
-const dipData = await dipResponse.json();
-
-const drinkResponse = await fetch(url + "?type=drink", options);
-const drinkData = await drinkResponse.json();
 
 const sauceButton = document.querySelector(".sauce-buttons");
 const drinksButton = document.querySelector(".drinks-buttons");
@@ -37,6 +30,27 @@ const orderList = document.querySelector(".order-list");
 const numberOfItemInCart = document.querySelector(".orange-circle");
 const hoverEffect = document.querySelector(".hover-effect");
 const finishOrder = document.querySelector(".finish-order");
+const error = document.querySelector('.error')
+
+try {
+  const wontonResponse = await fetch(url + "?type=wonton", options);
+  wontonData = await wontonResponse.json();
+  
+  const dipResponse = await fetch(url + "?type=dip", options);
+  dipData = await dipResponse.json();
+  
+  const drinkResponse = await fetch(url + "?type=drink", options);
+  drinkData = await drinkResponse.json();
+}
+catch {
+  hideAllPages()
+  document.body.style.backgroundColor = "#eeeeee";
+  error.classList.remove('hide')
+
+  let h2 = document.createElement('h2')
+  h2.innerText = "Sidan kunde inte laddas, försök igen senare!"
+  error.append(h2)
+}
 
 // Renderar ut meny valen:
 wontonData.items.forEach((element) => {
@@ -178,6 +192,7 @@ function hideAllPages() {
   etaPage.classList.add("hide");
   receiptPage.classList.add("hide");
   menuPage.classList.add("hide");
+  error.classList.add('hide')
 }
 
 // Renderar kundvagnens innehåll och uppdaterar gränssnittet med aktuell information.
